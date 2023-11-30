@@ -42,6 +42,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/users/{id}', [AuthController::class, 'show'])->name('show');
     //Route::get('/users', [AuthController::class, 'index'])->name('index');
     Route::resource('/blog', BlogController::class)->except('create','edit');
+    Route::post('/refresh/token', [AuthController::class, 'refreshToken']);
 });
 Route::get('/users', [AuthController::class, 'index'])->name('index');
 Route::resource('/roles', RolesController::class);

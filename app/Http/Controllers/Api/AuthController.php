@@ -31,6 +31,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user             = Auth::user();
+            $success['id']  = $user->id;
             $success['name']  = $user->name;
             $success['token'] = $user->createToken('accessToken')->accessToken;
             $success['rol'] = $user->getRoleNames()->toArray();
@@ -113,4 +114,22 @@ class AuthController extends Controller
         else
             return sendError('Data not found');
     }
+    
+    public function refreshToken(Request $request)
+    {
+        $user = Auth::user();
+
+        $user->token()->revoke();
+
+        $newToken = $user->createToken('accessToken')->accessToken;
+
+        $success['id']  = $user->id;
+        $success['name']  = $user->name;
+        $success['email']  = $user->email;
+        $success['token'] = $newToken;
+        $success['rol'] = $user->getRoleNames()->toArray();
+        $success['permissions'] = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return sendResponse($success, 'Token refreshed successfully.');
+    }       
 }
